@@ -182,7 +182,9 @@ extension VideoPlayer.UIContainerViewController {
         case (.none, _), (.scrub, true), (.slowScrub, true):
             return Self.SupplementPanHandlingAction
         case (.brightness, _):
-            return Self.BrightnessPanHandlingAction
+            // Use the screen hosting this window rather than `UIScreen.main`,
+            // which is ambiguous on multi-display devices such as iPhone Duo
+            return Self.BrightnessPanHandlingAction(screen: view.window?.windowScene?.screen ?? UIScreen.main)
         case (.scrub, false):
             return Self.ScrubPanHandlingAction()
         case (.slowScrub, false):
@@ -232,9 +234,9 @@ extension VideoPlayer.UIContainerViewController {
 
     // MARK: - Brightness
 
-    private static var BrightnessPanHandlingAction: PanHandlingAction<CGFloat> {
+    private static func BrightnessPanHandlingAction(screen: UIScreen) -> PanHandlingAction<CGFloat> {
         PanHandlingAction<CGFloat>(
-            startValue: UIScreen.main.brightness
+            startValue: screen.brightness
         ) { startState, handlingState, viewState in
             guard handlingState.gestureState != .ended else { return }
 
@@ -258,7 +260,7 @@ extension VideoPlayer.UIContainerViewController {
             )
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                UIScreen.main.brightness = newBrightness
+                screen.brightness = newBrightness
             }
         }
     }

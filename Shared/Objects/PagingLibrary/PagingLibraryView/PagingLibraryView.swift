@@ -25,6 +25,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
     @Default(.Customization.Library.style)
     private var defaultLibraryStyle
 
+    @Environment(\.isRegularSizeClass)
+    private var isRegularSizeClass
     @Environment(\.tabSafeAreaInsets)
     private var tabSafeAreaInsets
 
@@ -64,7 +66,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
         libraryStyleOptions.hasVisibleControls ||
             (
                 libraryStyle.displayType == .list &&
-                    UIDevice.isPad &&
+                    !UIDevice.isTV &&
+                    isRegularSizeClass &&
                     libraryStyleOptions.displayTypes.contains(.list)
             )
     }
@@ -123,7 +126,8 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
                 layout: Element.layout(
                     for: libraryStyle,
                     options: libraryStyleOptions,
-                    insets: contentInsets(for: frame)
+                    insets: contentInsets(for: frame),
+                    isRegularSizeClass: isRegularSizeClass
                 )
             ) { element in
                 element.makeBody(libraryStyle: libraryStyle)
@@ -238,8 +242,17 @@ struct PagingLibraryView<Library: PagingLibrary>: View where Library.Element: Li
             viewModel.refreshForEnvironmentChange()
         }
         .onChange(of: libraryStyle) { oldStyle, newStyle in
-            if Element.layout(for: oldStyle, options: libraryStyleOptions, insets: .zero) ==
-                Element.layout(for: newStyle, options: libraryStyleOptions, insets: .zero)
+            if Element.layout(
+                for: oldStyle,
+                options: libraryStyleOptions,
+                insets: .zero,
+                isRegularSizeClass: isRegularSizeClass
+            ) == Element.layout(
+                for: newStyle,
+                options: libraryStyleOptions,
+                insets: .zero,
+                isRegularSizeClass: isRegularSizeClass
+            )
             {
                 gridProxy.redraw()
             }

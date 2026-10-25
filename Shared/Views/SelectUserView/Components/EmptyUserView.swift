@@ -14,7 +14,12 @@ extension SelectUserView {
 
         let action: () -> Void
 
-        private let columns: CGFloat = UIDevice.isPhone ? 2 : 5
+        @Environment(\.isRegularSizeClass)
+        private var isRegularSizeClass
+
+        private var columns: CGFloat {
+            isRegularSizeClass ? 5 : 2
+        }
 
         @ViewBuilder
         private var imageView: some View {

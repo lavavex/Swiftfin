@@ -40,4 +40,17 @@ extension EnvironmentValues {
     // TODO: figure out this directional response stuff
     @Entry
     var panGestureDirection: Direction = .all
+
+    /// Whether the scene has a regular width *and* height, such as on iPad
+    /// or the inner display of iPhone Duo.
+    ///
+    /// Prefer this over device idiom checks for layout decisions, as foldable
+    /// devices change between compact and regular sizes at runtime.
+    var isRegularSizeClass: Bool {
+        #if os(tvOS)
+        true
+        #else
+        horizontalSizeClass == .regular && verticalSizeClass == .regular
+        #endif
+    }
 }

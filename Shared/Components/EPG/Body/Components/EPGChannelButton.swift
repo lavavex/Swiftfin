@@ -11,6 +11,8 @@ import SwiftUI
 
 struct EPGChannelButton: View {
 
+    @Environment(\.isRegularSizeClass)
+    private var isRegularSizeClass
     @Environment(\.isSelected)
     private var isSelected
 
@@ -21,7 +23,9 @@ struct EPGChannelButton: View {
     var channel: BaseItemDto
     let action: () -> Void
 
-    private let layout = EPGLayout()
+    private var layout: EPGLayout {
+        EPGLayout(isRegularSizeClass: isRegularSizeClass)
+    }
 
     private var posterSize: CGFloat {
         min(

@@ -86,7 +86,9 @@ enum NotchDeviceReader {
 
         fallback.displayCornerRadius = privateCornerRadius(screen)
 
-        guard screen === UIScreen.main,
+        // Only measure the device's own display(s), not external displays.
+        // `UIScreen.main` is ambiguous on multi-display devices such as iPhone Duo.
+        guard window.windowScene?.session.role == .windowApplication,
               let orientation = window.windowScene?.effectiveGeometry.interfaceOrientation,
               orientation != .unknown,
               let portrait = privateRect(screen)

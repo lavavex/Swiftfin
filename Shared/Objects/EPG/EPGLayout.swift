@@ -15,11 +15,15 @@ struct EPGLayout: Equatable {
     let rulerHeight: CGFloat
     let pointsPerMinute: CGFloat
 
+    /// - Parameter isRegularSizeClass: Whether the containing scene is regular in both
+    ///   dimensions. Prefer this over the device idiom, as foldable devices such as
+    ///   iPhone Duo switch between compact and regular sizes at runtime.
     init(
-        channelColumnWidth: CGFloat = UIDevice.isTV ? 130 : UIDevice.isPad ? 110 : 84,
+        isRegularSizeClass: Bool = UIDevice.isPad,
+        channelColumnWidth: CGFloat? = nil,
         rowHeight: CGFloat? = nil,
         rulerHeight: CGFloat? = nil,
-        pointsPerMinute: CGFloat = UIDevice.isTV ? 10 : UIDevice.isPad ? 7 : 5
+        pointsPerMinute: CGFloat? = nil
     ) {
         let minimumRowHeight: CGFloat = UIDevice.isTV ? 120 : 74
         let minimumRulerHeight: CGFloat = UIDevice.isTV ? 44 : 28
@@ -29,10 +33,10 @@ struct EPGLayout: Equatable {
             18
         let preferredRulerHeight = UIFont.preferredFont(forTextStyle: .caption2).lineHeight + 12
 
-        self.channelColumnWidth = channelColumnWidth
+        self.channelColumnWidth = channelColumnWidth ?? (UIDevice.isTV ? 130 : isRegularSizeClass ? 110 : 84)
         self.rowHeight = rowHeight ?? max(minimumRowHeight, preferredProgramHeight.rounded(.up))
         self.rulerHeight = rulerHeight ?? max(minimumRulerHeight, preferredRulerHeight.rounded(.up))
-        self.pointsPerMinute = pointsPerMinute
+        self.pointsPerMinute = pointsPerMinute ?? (UIDevice.isTV ? 10 : isRegularSizeClass ? 7 : 5)
     }
 
     /// The horizontal distance that a span of time occupies.

@@ -10,10 +10,15 @@ import SwiftUI
 
 struct EPGTimeRuler: View {
 
+    @Environment(\.isRegularSizeClass)
+    private var isRegularSizeClass
+
     @ObservedObject
     var viewModel: EPGViewModel
 
-    private let layout = EPGLayout()
+    private var layout: EPGLayout {
+        EPGLayout(isRegularSizeClass: isRegularSizeClass)
+    }
 
     // Count of timestamps needed for the period (30m increments)
     private var labelCount: Int {

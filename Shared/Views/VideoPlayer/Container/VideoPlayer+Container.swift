@@ -602,7 +602,7 @@ extension VideoPlayer {
 
             view.backgroundColor = .black
 
-            let isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
+            let isCompact = isCompactLayout(for: view.bounds.size)
 
             setupOnLoadViews()
             setupOnLoadConstraints()
@@ -668,7 +668,7 @@ extension VideoPlayer {
 
         private func setupOnLoadConstraints() {
 
-            let isCompact = UIDevice.isPhone && view.bounds.size.isPortrait
+            let isCompact = isCompactLayout(for: view.bounds.size)
 
             let bottomAnchor = supplementContainerView.topAnchor.constraint(
                 equalTo: view.bottomAnchor,
@@ -752,7 +752,23 @@ extension VideoPlayer {
 
             lastSupplementLayout = (size, safeAreaInsets)
             cancelSupplementPan()
-            adjustConstraints(isCompact: UIDevice.isPhone && size.isPortrait)
+            adjustConstraints(isCompact: isCompactLayout(for: size))
+        }
+
+        /// Base the compact layout on size classes rather than the device idiom,
+        /// so that devices which change size at runtime, such as iPhone Duo when
+        /// opened, receive the regular layout on their larger display.
+        private func isCompactLayout(for size: CGSize) -> Bool {
+            let horizontal = traitCollection.horizontalSizeClass
+            let vertical = traitCollection.verticalSizeClass
+
+            // Traits may not be resolved before the view is in a window
+            guard horizontal != .unspecified, vertical != .unspecified else {
+                return UIDevice.isPhone && size.isPortrait
+            }
+
+            let isRegular = horizontal == .regular && vertical == .regular
+            return !isRegular && size.isPortrait
         }
 
         private func adjustConstraints(isCompact: Bool) {

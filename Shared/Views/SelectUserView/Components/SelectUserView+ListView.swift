@@ -13,6 +13,9 @@ extension SelectUserView {
 
     struct ListView: View {
 
+        @Environment(\.isRegularSizeClass)
+        private var isRegularSizeClass
+
         @Binding
         private var isEditing: Bool
         @Binding
@@ -58,7 +61,7 @@ extension SelectUserView {
                                 pipeline: .Swiftfin.local
                             )
                             .subtleShadow()
-                            .frame(width: UIDevice.isTV ? 120 : UIDevice.isPad ? 80 : 50)
+                            .frame(width: UIDevice.isTV ? 120 : isRegularSizeClass ? 80 : 50)
 
                             VStack(alignment: .leading) {
                                 Text(item.user.username)

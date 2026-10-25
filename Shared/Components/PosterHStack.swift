@@ -18,6 +18,9 @@ struct PosterHStack<
     let size: PosterDisplayType.Size
     let action: (Data.Element, Namespace.ID) -> Void
 
+    @Environment(\.isRegularSizeClass)
+    private var isRegularSizeClass
+
     private var layout: CollectionHStackLayout {
         #if os(tvOS)
         .grid(
@@ -26,7 +29,7 @@ struct PosterHStack<
             columnTrailingInset: 0
         )
         #else
-        if UIDevice.isPad {
+        if isRegularSizeClass {
             let minWidth: CGFloat = {
                 switch (displayType, size) {
                 case (.landscape, .small):

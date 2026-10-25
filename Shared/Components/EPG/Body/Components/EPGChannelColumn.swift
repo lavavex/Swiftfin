@@ -16,6 +16,9 @@ struct EPGChannelColumn: View {
     @Default(.accentColor)
     private var accentColor
 
+    @Environment(\.isRegularSizeClass)
+    private var isRegularSizeClass
+
     @ObservedObject
     var viewModel: EPGViewModel
 
@@ -24,7 +27,9 @@ struct EPGChannelColumn: View {
     let bottomInset: CGFloat
     let action: (BaseItemDto) -> Void
 
-    private let layout = EPGLayout()
+    private var layout: EPGLayout {
+        EPGLayout(isRegularSizeClass: isRegularSizeClass)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
