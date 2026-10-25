@@ -15,11 +15,26 @@ extension UIDevice {
     }
 
     static var isPad: Bool {
-        current.userInterfaceIdiom == .pad
+        current.userInterfaceIdiom == .pad || isRegularPhone
     }
 
     static var isPhone: Bool {
-        current.userInterfaceIdiom == .phone
+        current.userInterfaceIdiom == .phone && !isRegularPhone
+    }
+
+    /// A phone whose scene is regular in both dimensions, such as the inner
+    /// display of iPhone Duo, which should use iPad layouts.
+    private static var isRegularPhone: Bool {
+        #if os(iOS)
+        guard current.userInterfaceIdiom == .phone,
+              let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        else { return false }
+
+        let traits = scene.traitCollection
+        return traits.horizontalSizeClass == .regular && traits.verticalSizeClass == .regular
+        #else
+        false
+        #endif
     }
 
     static var isTV: Bool {

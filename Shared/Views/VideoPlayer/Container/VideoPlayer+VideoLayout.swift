@@ -91,7 +91,7 @@ extension VideoPlayer {
             insets: EdgeInsets,
             behavior: ViewState.AspectFillBehavior
         ) -> EdgeInsets {
-            guard behavior == .fit else { return .init() }
+            guard behavior == .fit, !UIDevice.isPad else { return .init() }
 
             let horizontalInset = max(insets.leading, insets.trailing)
             return EdgeInsets(
